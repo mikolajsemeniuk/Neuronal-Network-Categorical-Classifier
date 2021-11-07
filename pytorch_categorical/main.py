@@ -3,10 +3,13 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch import Tensor
+
 from sklearn.datasets import load_iris
-from numpy import ndarray
 from sklearn.model_selection import train_test_split
 
+from numpy import ndarray
+from pandas import DataFrame
+from typing import List, Dict, Tuple, Callable, Any
 
 iris = load_iris()
 inputs: ndarray = iris.data
@@ -21,11 +24,11 @@ inputs_train, inputs_test, targets_train, targets_test = \
     train_test_split(inputs, targets, test_size = 0.3, random_state = 80718)
 
 
-class NeuronalNetwork(nn.Module):
+class Model(nn.Module):
     def __init__(self):
         super().__init__()
-        self.linear_1 = nn.Linear(4, 128)
-        self.linear_2 = nn.Linear(128, 3)
+        self.linear_1 = nn.Linear(4, 64)
+        self.linear_2 = nn.Linear(64, 3)
 
     def forward(self, inputs: Tensor):
         inputs = self.linear_1(inputs)
@@ -34,9 +37,9 @@ class NeuronalNetwork(nn.Module):
         return nn.Softmax(dim=1)(inputs)
 
 
-network = NeuronalNetwork()
+model = Model()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(network.parameters(), lr = 0.01)
+optimizer = optim.SGD(model.parameters(), lr = 0.01)
 
 X_train: Tensor = torch.FloatTensor(inputs_train)
 X_test: Tensor = torch.FloatTensor(inputs_test)
@@ -48,7 +51,7 @@ for epoch in range(101):
     optimizer.zero_grad()
 
     predictions: Tensor = \
-        network.forward(X_train)
+        model.forward(X_train)
 
     loss: Tensor = \
         criterion(predictions, y_train)
