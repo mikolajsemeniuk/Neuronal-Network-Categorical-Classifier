@@ -53,10 +53,10 @@ for epoch in range(101):
     loss: Tensor = \
         criterion(predictions, y_train)
 
-    correct: Tensor = \
-        (torch.argmax(predictions, dim = -1) == y_train).sum()
+    accuracy: Tensor = \
+        (torch.argmax(predictions, dim = -1) == y_train).sum() / X_train.shape[0]
 
     loss.backward()
     optimizer.step()
 
-    print(f'epoch {epoch}, loss {loss.item()}, accuracy: {correct / X_train.shape[0]}')
+    print(f'epoch {epoch}, loss {loss.item()}, accuracy: {accuracy}')
