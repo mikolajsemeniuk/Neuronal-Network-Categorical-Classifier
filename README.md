@@ -1,4 +1,5 @@
-# ASD
+# Neuronal-Network-Classifier
+Neuronal Network Classifier implementation and comparisons using PyTorch, Keras, Tensorflow and numpy from scratch
 ```sh
 conda install numpy
 conda install pandas
