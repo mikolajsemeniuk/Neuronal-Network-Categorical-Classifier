@@ -1,16 +1,19 @@
 import numpy as np
 from numpy import ndarray
-
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
+from datetime import datetime
+from sklearn.preprocessing import LabelBinarizer
+import tensorflow.compat.v1 as tf
+from tensorflow.python.framework.ops import Tensor
+
+tf.disable_v2_behavior()
+
 
 iris = load_iris()
 inputs: ndarray = iris.data
-targets: ndarray = iris.target
-
-from sklearn.preprocessing import LabelBinarizer
 targets: ndarray = \
-    LabelBinarizer().fit_transform(targets)
+    LabelBinarizer().fit_transform(iris.target)
 
 inputs_train: ndarray
 inputs_test: ndarray
@@ -20,32 +23,19 @@ targets_test: ndarray
 inputs_train, inputs_test, targets_train, targets_test = \
     train_test_split(inputs, targets, test_size = 0.3, random_state = 80718)
 
-import tensorflow.compat.v1 as tf
-from tensorflow.python.framework.ops import Tensor
-tf.disable_v2_behavior()
 
+X: Tensor = tf.placeholder("float", shape=[None, 4])
+y: Tensor = tf.placeholder("float", shape=[None, 3])
 
-X: Tensor = tf.placeholder("float", shape=[None, inputs_train.shape[1]])
-y: Tensor = tf.placeholder("float", shape=[None, targets_train.shape[1]])
-
-weights = {
-  'h1': tf.Variable(tf.random_normal([inputs_train.shape[1], 64])),
-  'h2': tf.Variable(tf.random_normal([64, 3]))
-}
-biases = {
-  'b1': tf.Variable(tf.random_normal([64])),
-  'b2': tf.Variable(tf.random_normal([3]))
-}
+weights_1: Tensor = tf.Variable(tf.random_normal([4, 64]))
+weights_2: Tensor = tf.Variable(tf.random_normal([64, 3]))
+biases_1: Tensor = tf.Variable(tf.random_normal([64])),
+biases_2: Tensor = tf.Variable(tf.random_normal([3]))
 
 
 def forward(x) -> Tensor:
-
-    layer_1: Tensor = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
-    layer_1: Tensor = tf.nn.relu(layer_1)
-    
-    layer_2: Tensor = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-    layer_2: Tensor = tf.nn.softmax(layer_2)
-    return layer_2
+    layer_1: Tensor = tf.nn.relu(tf.add(tf.matmul(x, weights_1), biases_1))
+    return tf.add(tf.matmul(layer_1, weights_2), biases_2)
 
 
 predictions: Tensor = forward(X)
@@ -56,6 +46,7 @@ train_op = optimizer.minimize(cost)
 
 
 init = tf.global_variables_initializer()
+start = datetime.now()
 
 with tf.Session() as session:
     session.run(init)
@@ -70,3 +61,5 @@ with tf.Session() as session:
         print(f"Epoch = {epoch}, accuracy = {format(accuracy, '.4f')}")
 
     session.close()
+
+print(f'Time taken: {datetime.now() - start}')

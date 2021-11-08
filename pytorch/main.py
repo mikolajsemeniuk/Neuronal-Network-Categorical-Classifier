@@ -3,15 +3,11 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 from torch import Tensor
-
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
-
 from datetime import datetime
-
 from numpy import ndarray
-from pandas import DataFrame
-from typing import List, Dict, Tuple, Callable, Any
+
 
 iris = load_iris()
 inputs: ndarray = iris.data
@@ -47,6 +43,7 @@ X_train: Tensor = torch.FloatTensor(inputs_train)
 X_test: Tensor = torch.FloatTensor(inputs_test)
 y_train: Tensor = torch.LongTensor(targets_train)
 y_test: Tensor = torch.LongTensor(targets_test)
+
 
 start = datetime.now()
 
