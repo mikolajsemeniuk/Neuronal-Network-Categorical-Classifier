@@ -32,12 +32,12 @@ class Model(nn.Module):
         inputs = self.linear_1(inputs)
         inputs = F.relu(inputs)
         inputs = self.linear_2(inputs)
-        return nn.Softmax(dim=1)(inputs)
+        return nn.Softmax(dim = 1)(inputs)
 
 
 model = Model()
 criterion = nn.CrossEntropyLoss()
-optimizer = optim.SGD(model.parameters(), lr = 0.01)
+optimizer = optim.SGD(model.parameters(), lr = 0.1)
 
 X_train: Tensor = torch.FloatTensor(inputs_train)
 X_test: Tensor = torch.FloatTensor(inputs_test)
@@ -62,6 +62,6 @@ for epoch in range(101):
     loss.backward()
     optimizer.step()
 
-    print(f'epoch {epoch}, loss {format(loss.item(), ".4f")}, accuracy: {format(accuracy, ".4f")}')
+    print(f'epoch {epoch}, loss {loss.item():.4f}, accuracy: {accuracy:.4f}')
 
 print(f'Time taken: {datetime.now() - start}')

@@ -58,7 +58,7 @@ with tf.Session() as session:
         accuracy = np.mean(np.argmax(targets_train, axis = 1) == \
             session.run(tf.argmax(predictions, axis = 1), feed_dict={ X: inputs_train, y: targets_train }))
         
-        print(f"Epoch = {epoch}, accuracy = {format(accuracy, '.4f')}")
+        print(f"Epoch = {epoch}, accuracy = {accuracy:.4f}")
 
     session.close()
 
