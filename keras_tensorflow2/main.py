@@ -1,9 +1,11 @@
-from keras.models import Sequential
-from keras.layers import Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import Dense
 from tensorflow.keras.utils import to_categorical
 
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
+
+from datetime import datetime
 
 from numpy import ndarray
 from pandas import DataFrame
@@ -27,4 +29,8 @@ model.add(Dense(3, activation = 'softmax'))
 model.compile(loss='categorical_crossentropy', optimizer='sgd', metrics=['accuracy'])
 print(model.summary())
 
+start = datetime.now()
+
 model.fit(inputs_train, to_categorical(targets_train), epochs = 100, verbose = 1)
+
+print(f'Time taken: {datetime.now() - start}')

@@ -7,6 +7,8 @@ from torch import Tensor
 from sklearn.datasets import load_iris
 from sklearn.model_selection import train_test_split
 
+from datetime import datetime
+
 from numpy import ndarray
 from pandas import DataFrame
 from typing import List, Dict, Tuple, Callable, Any
@@ -46,6 +48,7 @@ X_test: Tensor = torch.FloatTensor(inputs_test)
 y_train: Tensor = torch.LongTensor(targets_train)
 y_test: Tensor = torch.LongTensor(targets_test)
 
+start = datetime.now()
 
 for epoch in range(101):
     optimizer.zero_grad()
@@ -62,4 +65,6 @@ for epoch in range(101):
     loss.backward()
     optimizer.step()
 
-    print(f'epoch {epoch}, loss {loss.item()}, accuracy: {accuracy}')
+    print(f'epoch {epoch}, loss {format(loss.item(), ".4f")}, accuracy: {format(accuracy, ".4f")}')
+
+print(f'Time taken: {datetime.now() - start}')
