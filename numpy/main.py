@@ -10,12 +10,17 @@ class Layer_Dense:
     def __init__(self, n_inputs, n_neurons) -> None:
         # np.random.rand is for Uniform distribution (in the half-open interval [0.0, 1.0))
         # np.random.randn is for Standard Normal (aka. Gaussian) distribution (mean 0 and variance 1)
+        
         # lack of initialization
-        self.weights: ndarray = np.random.randn(n_inputs, n_neurons)
+        # self.weights: ndarray = np.random.randn(n_inputs, n_neurons)
+        
         # small weights
         # self.weights: ndarray = np.random.randn(n_inputs, n_neurons)
-        # kaiming initialization
+
+        # he/kaiming initialization
         self.weights: ndarray = np.random.randn(n_inputs, n_neurons) * np.sqrt(2 / n_inputs)
+
+        # LeCun/Glorot/Xavier
         self.biases: ndarray = np.zeros((1, n_neurons))
       
     def forward(self, inputs: ndarray) -> None:
@@ -48,10 +53,10 @@ class Activation_Softmax:
 
     def backward(self, dvalues: ndarray) -> None:
         self.dinputs: ndarray = np.empty_like(dvalues)
-        for index, (single_output, _) in enumerate(zip(self.output, dvalues)):
+        for index, (single_output, single_dvalues) in enumerate(zip(self.output, dvalues)):
             single_output: ndarray = single_output.reshape(-1, 1)
             jacobian_matrix: ndarray = np.diagflat(single_output) - np.dot(single_output, single_output.T)
-            self.dinputs[index] = np.dot(jacobian_matrix, keepdims=True)
+            self.dinputs[index] = np.dot(jacobian_matrix, single_dvalues)
 
 
 class Loss_CategoricalCrossentropy:
@@ -125,28 +130,55 @@ inputs_train, inputs_test, targets_train, targets_test = \
 dense1 = Layer_Dense(4, 64)
 activation1 = Activation_ReLU()
 dense2 = Layer_Dense(64, 3)
+
+activation2 = Activation_Softmax()
+loss_function = Loss_CategoricalCrossentropy()
+
 loss_activation = Activation_Softmax_Loss_CategoricalCrossentropy()
+
 optimizer = Optimizer_SGD(learning_rate = 0.1)
+
+start = datetime.now()
 
 for epoch in range(101):
     
     dense1.forward(inputs_train)
     activation1.forward(dense1.output)
     dense2.forward(activation1.output)
+    
+    # 1
+    # activation2.forward(dense2.output)
+    # loss = loss_function.calculate(activation2.output, targets_train)
+    # 2
     loss = loss_activation.forward(dense2.output, targets_train)
+
+    # 1
+    # predictions = np.argmax(activation2.output, axis=1)
+    # 2
     predictions = np.argmax(loss_activation.output, axis=1)
     
     if len(targets_train.shape) == 2:
         targets_train = np.argmax(targets_train, axis=1)
-
     accuracy = np.mean(predictions == targets_train)
     
     print(f'epoch: {epoch}, acc: {accuracy:.4f}, loss: {loss:.4f}')
     
+    # 1
+    # loss_function.backward(activation2.output, targets_train)
+    # activation2.backward(loss_function.dinputs)
+    # dense2.backward(activation2.dinputs)
+
+    # 2
     loss_activation.backward(loss_activation.output, targets_train)
     dense2.backward(loss_activation.dinputs)
+
     activation1.backward(dense2.dinputs)
     dense1.backward(activation1.dinputs)
       
     optimizer.update_params(dense1)
     optimizer.update_params(dense2)
+# 1
+# 0:00:00.172553
+# 2
+# 0:00:00.063677
+print(f'Time taken: {datetime.now() - start}')
