@@ -135,8 +135,8 @@ class Optimizer_SGD:
                 # layer.bias_momentums = bias_updates
                 layer.bias_momentums = -self.current_learning_rate * layer.dbiases
             else:
-                weight_updates = -self.current_learning_rate * layer.dweights
-                bias_updates = -self.current_learning_rate * layer.dbiases
+                layer.weight_updates = -self.current_learning_rate * layer.dweights
+                layer.bias_updates = -self.current_learning_rate * layer.dbiases
 
         layer.weights += -self.learning_rate * layer.dweights 
         layer.biases += -self.learning_rate * layer.dbiases
