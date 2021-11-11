@@ -1,4 +1,4 @@
-# Neuronal-Network-Classifier
+# Neuronal-Network-Categorical-Classifier
 Neuronal Network Classifier implementation and comparisons using PyTorch, Keras, Tensorflow and numpy from scratch
 ```sh
 conda create -n categorical python=3.9
